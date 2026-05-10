@@ -3,6 +3,7 @@ package com.example.FormSystem.entity;
 import jakarta.persistence.*;
 import java.util.List;
 import com.example.FormSystem.enums.FormStatus;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name = "forms")
@@ -27,6 +28,10 @@ public class Form {
 
     @OneToMany(mappedBy = "form", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Field> fields;
+
+    @OneToMany(mappedBy = "form", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
+    private List<Submission> submissions;
 
     public Form() {
     }
@@ -77,5 +82,13 @@ public class Form {
 
     public void setFields(List<Field> fields) {
         this.fields = fields;
+    }
+
+    public List<Submission> getSubmissions() {
+        return submissions;
+    }
+
+    public void setSubmissions(List<Submission> submissions) {
+        this.submissions = submissions;
     }
 }

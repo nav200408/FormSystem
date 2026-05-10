@@ -5,6 +5,7 @@ import java.util.List;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 import com.example.FormSystem.enums.FieldType;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name = "fields")
@@ -33,6 +34,7 @@ public class Field {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "form_id", nullable = false)
+    @JsonIgnore
     private Form form;
 
     public Field() {

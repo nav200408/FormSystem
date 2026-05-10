@@ -26,14 +26,14 @@ public class FormController {
     }
 
     @GetMapping
-    public ResponseEntity<PageResponse<Form>> getAllForms(
+    public ResponseEntity<ResponseData<PageResponse<Form>>> getAllForms(
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "10") int size) {
-        if(page<1){
-            page=1;
+        if (page < 1) {
+            page = 1;
         }
-        if(size<1){
-            size=1;
+        if (size < 1) {
+            size = 1;
         }
         PageResponse<Form> response = formService.getForms(page, size);
 
@@ -41,9 +41,8 @@ public class FormController {
                 MessageConstant.RETRIEVE_DATA_SUCCESS,
                 response,
                 HttpStatus.OK.value(),
-                true
-        );
+                true);
 
-        return new ResponseEntity(res, HttpStatus.OK);
+        return new ResponseEntity<>(res, HttpStatus.OK);
     }
 }
