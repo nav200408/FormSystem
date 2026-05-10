@@ -1,4 +1,4 @@
-package com.example.FormSystem.dto;
+package com.example.FormSystem.dto.response;
 
 import java.time.LocalDateTime;
 import java.util.Map;

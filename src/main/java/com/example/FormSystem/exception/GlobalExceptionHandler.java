@@ -1,7 +1,7 @@
 package com.example.FormSystem.exception;
 
 import com.example.FormSystem.constant.MessageConstant;
-import com.example.FormSystem.dto.ErrorResponse;
+import com.example.FormSystem.dto.response.ErrorResponse;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.security.SignatureException;
@@ -23,9 +23,9 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 
-import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
 
@@ -45,6 +45,18 @@ public class GlobalExceptionHandler {
         errors.put("validation", validationMap);
         errors.put("code", ex.getStatusCode());
         errors.put("message", errorMessage);
+
+        ErrorResponse errorResponse = new ErrorResponse(errors, request.getRequestURI());
+        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    public ResponseEntity<ErrorResponse> handleMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException ex,
+                                                                                   HttpServletRequest request) {
+
+        Map<String, Object> errors = Map.of(
+                "message", ex.getMessage(),
+                "code", String.valueOf(HttpStatus.BAD_REQUEST.value()));
 
         ErrorResponse errorResponse = new ErrorResponse(errors, request.getRequestURI());
         return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);

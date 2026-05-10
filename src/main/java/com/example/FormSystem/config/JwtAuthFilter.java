@@ -1,16 +1,19 @@
 package com.example.FormSystem.config;
 
-import com.example.FormSystem.service.CustomUserDetailsService;
+import com.example.FormSystem.service.impl.CustomUserDetailsService;
 import com.example.FormSystem.utils.JwtUtils;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.servlet.HandlerExceptionResolver;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -18,14 +21,20 @@ import java.io.IOException;
 
 @Component
 public class JwtAuthFilter extends OncePerRequestFilter {
+    @Autowired
+    private JwtUtils jwtUtils;
+    @Autowired
+    private CustomUserDetailsService userDetailsService;
 
-    private final JwtUtils jwtUtils;
-    private final CustomUserDetailsService userDetailsService;
+    @Autowired
+    @Qualifier("handlerExceptionResolver")
+    private HandlerExceptionResolver resolver;
 
     public JwtAuthFilter(JwtUtils jwtUtils, CustomUserDetailsService userDetailsService) {
         this.jwtUtils = jwtUtils;
         this.userDetailsService = userDetailsService;
     }
+
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
@@ -46,7 +55,8 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }
         } catch (Exception e) {
-            System.err.println("Cannot set user authentication: " + e.getMessage());
+            resolver.resolveException(request, response, null, e);
+            return;
         }
 
         filterChain.doFilter(request, response);

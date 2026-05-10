@@ -1,6 +1,5 @@
-package com.example.FormSystem.service;
+package com.example.FormSystem.service.impl;
 
-import com.example.FormSystem.entity.User;
 import com.example.FormSystem.repository.UserRepository;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

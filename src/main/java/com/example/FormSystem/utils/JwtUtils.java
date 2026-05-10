@@ -41,12 +41,7 @@ public class JwtUtils {
     }
 
     public boolean validateJwtToken(String authToken) {
-        try {
-            Jwts.parser().verifyWith(getSigningKey()).build().parseSignedClaims(authToken);
-            return true;
-        } catch (JwtException | IllegalArgumentException e) {
-            System.err.println("Invalid JWT token: " + e.getMessage());
-        }
-        return false;
+        Jwts.parser().verifyWith(getSigningKey()).build().parseSignedClaims(authToken);
+        return true;
     }
 }
