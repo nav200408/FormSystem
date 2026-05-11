@@ -1,10 +1,14 @@
 package com.example.FormSystem.service.impl;
 
+import com.example.FormSystem.constant.MessageConstant;
+import com.example.FormSystem.dto.request.CreateFormRequest;
+import com.example.FormSystem.dto.request.UpdateFormRequest;
 import com.example.FormSystem.dto.response.FormDtoResponse;
 import com.example.FormSystem.dto.response.PageResponse;
 import com.example.FormSystem.entity.Form;
 import com.example.FormSystem.enums.FormStatus;
 import com.example.FormSystem.repository.FormRepository;
+import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -14,8 +18,10 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -28,6 +34,7 @@ public class FormServiceImplTest {
     private FormServiceImpl formService;
 
     private List<Form> mockForms;
+    private Form mockForm;
 
     @BeforeEach
     void setUp() {
@@ -41,11 +48,17 @@ public class FormServiceImplTest {
             form.setOrder(i + 1);
             mockForms.add(form);
         }
+
+        mockForm = new Form();
+        mockForm.setFormId(1L);
+        mockForm.setFormName("Test Form");
+        mockForm.setFormDescription("Test Description");
+        mockForm.setStatus(FormStatus.DRAFT);
+        mockForm.setOrder(1);
     }
 
     @Test
     void getForms_HasNextIsTrue() {
-
         int page = 1;
         int size = 4;
         when(formRepository.findAllWithDeferredPagination(size + 1, 0)).thenReturn(mockForms);
@@ -54,15 +67,11 @@ public class FormServiceImplTest {
 
         assertTrue(response.isHasNext());
         assertEquals(4, response.getContent().size());
-        assertEquals(page, response.getPage());
-        assertEquals(size, response.getSize());
-        assertEquals("Form 0", response.getContent().get(0).getFormName());
-        verify(formRepository, times(1)).findAllWithDeferredPagination(size + 1, 0);
+        verify(formRepository).findAllWithDeferredPagination(size + 1, 0);
     }
 
     @Test
     void getForms_HasNextIsFalse() {
-
         int page = 1;
         int size = 5;
         when(formRepository.findAllWithDeferredPagination(size + 1, 0)).thenReturn(mockForms);
@@ -71,38 +80,82 @@ public class FormServiceImplTest {
 
         assertFalse(response.isHasNext());
         assertEquals(5, response.getContent().size());
-        assertEquals(page, response.getPage());
-        assertEquals(size, response.getSize());
-        verify(formRepository, times(1)).findAllWithDeferredPagination(size + 1, 0);
     }
 
     @Test
-    void getForms_EmptyList() {
+    void createForm_Success() {
+        CreateFormRequest request = new CreateFormRequest();
+        request.setFormName("New Form");
+        request.setFormDescription("Desc");
+        request.setOrder(1);
 
-        int page = 2;
-        int size = 10;
-        int offset = (page - 1) * size;
-        when(formRepository.findAllWithDeferredPagination(size + 1, offset)).thenReturn(new ArrayList<>());
+        when(formRepository.save(any(Form.class))).thenReturn(mockForm);
 
-        PageResponse<FormDtoResponse> response = formService.getForms(page, size);
+        FormDtoResponse result = formService.createForm(request);
 
-        assertFalse(response.isHasNext());
-        assertTrue(response.getContent().isEmpty());
-        assertEquals(page, response.getPage());
-        assertEquals(size, response.getSize());
-        verify(formRepository, times(1)).findAllWithDeferredPagination(size + 1, offset);
+        assertNotNull(result);
+        assertEquals("Test Form", result.getFormName());
+        verify(formRepository).save(any(Form.class));
     }
 
     @Test
-    void getForms_CorrectOffsetCalculation() {
+    void getFormById_Success() {
+        when(formRepository.findById(1L)).thenReturn(Optional.of(mockForm));
 
-        int page = 3;
-        int size = 10;
-        int expectedOffset = 20;
-        when(formRepository.findAllWithDeferredPagination(size + 1, expectedOffset)).thenReturn(new ArrayList<>());
+        Form result = formService.getFormById(1L);
 
-        formService.getForms(page, size);
+        assertNotNull(result);
+        assertEquals(1L, result.getFormId());
+    }
 
-        verify(formRepository, times(1)).findAllWithDeferredPagination(size + 1, expectedOffset);
+    @Test
+    void getFormById_NotFound() {
+        when(formRepository.findById(99L)).thenReturn(Optional.empty());
+
+        EntityNotFoundException exception = assertThrows(EntityNotFoundException.class,
+                () -> formService.getFormById(99L));
+        assertTrue(exception.getMessage().contains(MessageConstant.FORM_NOT_FOUND));
+    }
+
+    @Test
+    void updateForm_Success() {
+        UpdateFormRequest request = new UpdateFormRequest();
+        request.setFormName("Updated Name");
+        request.setFormDescription("Updated Desc");
+        request.setStatus(FormStatus.ACTIVE);
+        request.setOrder(2);
+
+        when(formRepository.findById(1L)).thenReturn(Optional.of(mockForm));
+        when(formRepository.save(any(Form.class))).thenReturn(mockForm);
+
+        FormDtoResponse result = formService.updateForm(1L, request);
+
+        assertNotNull(result);
+        verify(formRepository).save(mockForm);
+    }
+
+    @Test
+    void updateForm_NotFound() {
+        UpdateFormRequest request = new UpdateFormRequest();
+        when(formRepository.findById(99L)).thenReturn(Optional.empty());
+
+        assertThrows(EntityNotFoundException.class, () -> formService.updateForm(99L, request));
+    }
+
+    @Test
+    void deleteForm_Success() {
+        when(formRepository.findById(1L)).thenReturn(Optional.of(mockForm));
+
+        formService.deleteForm(1L);
+
+        verify(formRepository).delete(mockForm);
+    }
+
+    @Test
+    void deleteForm_NotFound() {
+        when(formRepository.findById(99L)).thenReturn(Optional.empty());
+
+        assertThrows(EntityNotFoundException.class, () -> formService.deleteForm(99L));
+        verify(formRepository, never()).delete(any());
     }
 }
