@@ -14,4 +14,13 @@ public class MessageConstant {
     public static final String FORM_ORDER_REQUIRED = "Form order is required";
     public static final String FORM_ORDER_MIN = "Form order must be at least 1";
     public static final String FORM_NOT_FOUND = "Form not found with id: ";
+
+    // field validation messages
+    public static final String FIELD_LABEL_REQUIRED = "Field label is required";
+    public static final String FIELD_TYPE_REQUIRED = "Field type is required";
+    public static final String FIELD_ORDER_REQUIRED = "Field order is required";
+    public static final String FIELD_ORDER_MIN = "Field order must be at least 1";
+    public static final String FIELD_IS_REQUIRED_REQUIRED = "Is required field is required";
+    public static final String FIELD_OPTIONS_NOT_ALLOWED = "Options are only allowed for SELECT field type";
+    public static final String FIELD_ORDER_DUPLICATED = "Field order is already taken in this form";
 }

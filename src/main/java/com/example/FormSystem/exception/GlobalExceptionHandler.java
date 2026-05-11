@@ -50,20 +50,28 @@ public class GlobalExceptionHandler {
                 return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
         }
 
-        @ExceptionHandler(MethodArgumentTypeMismatchException.class)
-        public ResponseEntity<ErrorResponse> handleMethodArgumentTypeMismatchException(
-                        MethodArgumentTypeMismatchException ex,
-                        HttpServletRequest request) {
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<ErrorResponse> handleIllegalArgumentException(IllegalArgumentException ex,
+            HttpServletRequest request) {
+        Map<String, Object> errors = Map.of(
+                "message", ex.getMessage(),
+                "code", String.valueOf(HttpStatus.BAD_REQUEST.value()));
+        ErrorResponse errorResponse = new ErrorResponse(errors, request.getRequestURI());
+        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+    }
 
-                Map<String, Object> errors = Map.of(
-                                "message", ex.getMessage(),
-                                "code", String.valueOf(HttpStatus.BAD_REQUEST.value()));
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    public ResponseEntity<ErrorResponse> handleMethodArgumentTypeMismatchException(
+            MethodArgumentTypeMismatchException ex,
+            HttpServletRequest request) {
+        Map<String, Object> errors = Map.of(
+                "message", ex.getMessage(),
+                "code", String.valueOf(HttpStatus.BAD_REQUEST.value()));
+        ErrorResponse errorResponse = new ErrorResponse(errors, request.getRequestURI());
+        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+    }
 
-                ErrorResponse errorResponse = new ErrorResponse(errors, request.getRequestURI());
-                return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
-        }
-
-        @ExceptionHandler(ConstraintViolationException.class)
+    @ExceptionHandler(ConstraintViolationException.class)
         public ResponseEntity<ErrorResponse> handleConstraintViolationException(ConstraintViolationException ex,
                         HttpServletRequest request) {
                 Map<String, Object> errors = Map.of(

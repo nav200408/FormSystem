@@ -8,7 +8,8 @@ import com.example.FormSystem.enums.FieldType;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
-@Table(name = "fields")
+@Table(name = "fields", indexes = @Index(name = "idx_field_form_order", columnList = "form_id, field_order"), uniqueConstraints = @UniqueConstraint(name = "uk_field_form_order", columnNames = {
+        "form_id", "field_order" }))
 public class Field {
 
     @Id
