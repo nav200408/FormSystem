@@ -1,12 +1,15 @@
 package com.example.FormSystem.service.impl;
 
+import com.example.FormSystem.dto.request.CreateFormRequest;
 import com.example.FormSystem.dto.response.PageResponse;
 import com.example.FormSystem.entity.Form;
+import com.example.FormSystem.mapper.FormMapper;
 import com.example.FormSystem.repository.FormRepository;
 
 import com.example.FormSystem.service.FormService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -32,4 +35,12 @@ public class FormServiceImpl implements FormService {
 
         return new PageResponse<>(forms, page, size, hasNext);
     }
+
+    @Override
+    @Transactional
+    public Form createForm(CreateFormRequest request) {
+        Form form = FormMapper.toEntity(request);
+        return formRepository.save(form);
+    }
 }
+

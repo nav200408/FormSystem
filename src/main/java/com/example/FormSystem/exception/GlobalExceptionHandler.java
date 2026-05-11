@@ -31,172 +31,175 @@ import java.util.HashMap;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ErrorResponse> handleValidationExceptions(MethodArgumentNotValidException ex,
-            HttpServletRequest request) {
-        Map<String, String> validationMap = new HashMap<>();
-        String errorMessage = MessageConstant.VALIDATION_FAILED;
+        @ExceptionHandler(MethodArgumentNotValidException.class)
+        public ResponseEntity<ErrorResponse> handleValidationExceptions(MethodArgumentNotValidException ex,
+                        HttpServletRequest request) {
+                Map<String, String> validationMap = new HashMap<>();
+                String errorMessage = MessageConstant.VALIDATION_FAILED;
 
-        for (FieldError error : ex.getBindingResult().getFieldErrors()) {
-            validationMap.put(error.getField(), error.getDefaultMessage());
+                for (FieldError error : ex.getBindingResult().getFieldErrors()) {
+                        validationMap.put(error.getField(), error.getDefaultMessage());
+                }
+
+                Map<String, Object> errors = new HashMap<>();
+                errors.put("validation", validationMap);
+                errors.put("code", ex.getStatusCode());
+                errors.put("message", errorMessage);
+
+                ErrorResponse errorResponse = new ErrorResponse(errors, request.getRequestURI());
+                return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
         }
 
-        Map<String, Object> errors = new HashMap<>();
-        errors.put("validation", validationMap);
-        errors.put("code", ex.getStatusCode());
-        errors.put("message", errorMessage);
+        @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+        public ResponseEntity<ErrorResponse> handleMethodArgumentTypeMismatchException(
+                        MethodArgumentTypeMismatchException ex,
+                        HttpServletRequest request) {
 
-        ErrorResponse errorResponse = new ErrorResponse(errors, request.getRequestURI());
-        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
-    }
+                Map<String, Object> errors = Map.of(
+                                "message", ex.getMessage(),
+                                "code", String.valueOf(HttpStatus.BAD_REQUEST.value()));
 
-    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
-    public ResponseEntity<ErrorResponse> handleMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException ex,
-                                                                                   HttpServletRequest request) {
+                ErrorResponse errorResponse = new ErrorResponse(errors, request.getRequestURI());
+                return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+        }
 
-        Map<String, Object> errors = Map.of(
-                "message", ex.getMessage(),
-                "code", String.valueOf(HttpStatus.BAD_REQUEST.value()));
+        @ExceptionHandler(ConstraintViolationException.class)
+        public ResponseEntity<ErrorResponse> handleConstraintViolationException(ConstraintViolationException ex,
+                        HttpServletRequest request) {
+                Map<String, Object> errors = Map.of(
+                                "message", ex.getMessage(),
+                                "code", String.valueOf(HttpStatus.BAD_REQUEST.value()));
+                ErrorResponse errorResponse = new ErrorResponse(errors, request.getRequestURI());
+                return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+        }
 
-        ErrorResponse errorResponse = new ErrorResponse(errors, request.getRequestURI());
-        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
-    }
+        @ExceptionHandler(HttpMessageNotReadableException.class)
+        public ResponseEntity<ErrorResponse> handleHttpMessageNotReadableException(HttpMessageNotReadableException ex,
+                        HttpServletRequest request) {
+                Map<String, Object> errors = Map.of(
+                                "message", ex.getMostSpecificCause().getMessage(),
+                                "code", String.valueOf(HttpStatus.BAD_REQUEST.value()));
+                ErrorResponse errorResponse = new ErrorResponse(errors, request.getRequestURI());
+                return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+        }
 
-    @ExceptionHandler(ConstraintViolationException.class)
-    public ResponseEntity<ErrorResponse> handleConstraintViolationException(ConstraintViolationException ex,
-            HttpServletRequest request) {
-        Map<String, Object> errors = Map.of(
-                "message", ex.getMessage(),
-                "code", String.valueOf(HttpStatus.BAD_REQUEST.value()));
-        ErrorResponse errorResponse = new ErrorResponse(errors, request.getRequestURI());
-        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
-    }
+        @ExceptionHandler(MissingServletRequestParameterException.class)
+        public ResponseEntity<ErrorResponse> handleMissingParams(MissingServletRequestParameterException ex,
+                        HttpServletRequest request) {
+                Map<String, Object> errors = Map.of(
+                                "message", ex.getMessage(),
+                                "code", String.valueOf(HttpStatus.BAD_REQUEST.value()));
+                ErrorResponse errorResponse = new ErrorResponse(errors, request.getRequestURI());
+                return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+        }
 
-    @ExceptionHandler(HttpMessageNotReadableException.class)
-    public ResponseEntity<ErrorResponse> handleHttpMessageNotReadableException(HttpMessageNotReadableException ex,
-            HttpServletRequest request) {
-        Map<String, Object> errors = Map.of(
-                "message", ex.getMostSpecificCause().getMessage(),
-                "code", String.valueOf(HttpStatus.BAD_REQUEST.value()));
-        ErrorResponse errorResponse = new ErrorResponse(errors, request.getRequestURI());
-        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
-    }
+        @ExceptionHandler(BadCredentialsException.class)
+        public ResponseEntity<ErrorResponse> handleBadCredentialsException(BadCredentialsException ex,
+                        HttpServletRequest request) {
+                Map<String, Object> errors = Map.of(
+                                "message", ex.getMessage(),
+                                "code", String.valueOf(HttpStatus.UNAUTHORIZED.value()));
+                ErrorResponse errorResponse = new ErrorResponse(errors, request.getRequestURI());
+                return new ResponseEntity<>(errorResponse, HttpStatus.UNAUTHORIZED);
+        }
 
-    @ExceptionHandler(MissingServletRequestParameterException.class)
-    public ResponseEntity<ErrorResponse> handleMissingParams(MissingServletRequestParameterException ex,
-            HttpServletRequest request) {
-        Map<String, Object> errors = Map.of(
-                "message", ex.getMessage(),
-                "code", String.valueOf(HttpStatus.BAD_REQUEST.value()));
-        ErrorResponse errorResponse = new ErrorResponse(errors, request.getRequestURI());
-        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
-    }
+        @ExceptionHandler(AccessDeniedException.class)
+        public ResponseEntity<ErrorResponse> handleAccessDeniedException(AccessDeniedException ex,
+                        HttpServletRequest request) {
+                Map<String, Object> errors = Map.of(
+                                "message", ex.getMessage(),
+                                "code", String.valueOf(HttpStatus.FORBIDDEN.value()));
+                ErrorResponse errorResponse = new ErrorResponse(errors, request.getRequestURI());
+                return new ResponseEntity<>(errorResponse, HttpStatus.FORBIDDEN);
+        }
 
-    @ExceptionHandler(BadCredentialsException.class)
-    public ResponseEntity<ErrorResponse> handleBadCredentialsException(BadCredentialsException ex,
-            HttpServletRequest request) {
-        Map<String, Object> errors = Map.of(
-                "message", ex.getMessage(),
-                "code", String.valueOf(HttpStatus.UNAUTHORIZED.value()));
-        ErrorResponse errorResponse = new ErrorResponse(errors, request.getRequestURI());
-        return new ResponseEntity<>(errorResponse, HttpStatus.UNAUTHORIZED);
-    }
+        @ExceptionHandler(ExpiredJwtException.class)
+        public ResponseEntity<ErrorResponse> handleExpiredJwtException(ExpiredJwtException ex,
+                        HttpServletRequest request) {
+                Map<String, Object> errors = Map.of(
+                                "message", ex.getMessage(),
+                                "code", String.valueOf(HttpStatus.UNAUTHORIZED.value()));
+                ErrorResponse errorResponse = new ErrorResponse(errors, request.getRequestURI());
+                return new ResponseEntity<>(errorResponse, HttpStatus.UNAUTHORIZED);
+        }
 
-    @ExceptionHandler(AccessDeniedException.class)
-    public ResponseEntity<ErrorResponse> handleAccessDeniedException(AccessDeniedException ex,
-            HttpServletRequest request) {
-        Map<String, Object> errors = Map.of(
-                "message", ex.getMessage(),
-                "code", String.valueOf(HttpStatus.FORBIDDEN.value()));
-        ErrorResponse errorResponse = new ErrorResponse(errors, request.getRequestURI());
-        return new ResponseEntity<>(errorResponse, HttpStatus.FORBIDDEN);
-    }
+        @ExceptionHandler({ SignatureException.class, MalformedJwtException.class })
+        public ResponseEntity<ErrorResponse> handleInvalidJwtException(Exception ex, HttpServletRequest request) {
+                Map<String, Object> errors = Map.of(
+                                "message", ex.getMessage(),
+                                "code", String.valueOf(HttpStatus.UNAUTHORIZED.value()));
+                ErrorResponse errorResponse = new ErrorResponse(errors, request.getRequestURI());
+                return new ResponseEntity<>(errorResponse, HttpStatus.UNAUTHORIZED);
+        }
 
-    @ExceptionHandler(ExpiredJwtException.class)
-    public ResponseEntity<ErrorResponse> handleExpiredJwtException(ExpiredJwtException ex, HttpServletRequest request) {
-        Map<String, Object> errors = Map.of(
-                "message", ex.getMessage(),
-                "code", String.valueOf(HttpStatus.UNAUTHORIZED.value()));
-        ErrorResponse errorResponse = new ErrorResponse(errors, request.getRequestURI());
-        return new ResponseEntity<>(errorResponse, HttpStatus.UNAUTHORIZED);
-    }
+        @ExceptionHandler(EntityNotFoundException.class)
+        public ResponseEntity<ErrorResponse> handleEntityNotFoundException(EntityNotFoundException ex,
+                        HttpServletRequest request) {
+                Map<String, Object> errors = Map.of(
+                                "message", ex.getMessage(),
+                                "code", String.valueOf(HttpStatus.NOT_FOUND.value()));
+                ErrorResponse errorResponse = new ErrorResponse(errors, request.getRequestURI());
+                return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
+        }
 
-    @ExceptionHandler({ SignatureException.class, MalformedJwtException.class })
-    public ResponseEntity<ErrorResponse> handleInvalidJwtException(Exception ex, HttpServletRequest request) {
-        Map<String, Object> errors = Map.of(
-                "message", ex.getMessage(),
-                "code", String.valueOf(HttpStatus.UNAUTHORIZED.value()));
-        ErrorResponse errorResponse = new ErrorResponse(errors, request.getRequestURI());
-        return new ResponseEntity<>(errorResponse, HttpStatus.UNAUTHORIZED);
-    }
+        @ExceptionHandler(NoResourceFoundException.class)
+        public ResponseEntity<ErrorResponse> handleNoResourceFoundException(NoResourceFoundException ex,
+                        HttpServletRequest request) {
+                Map<String, Object> errors = Map.of(
+                                "message", ex.getMessage(),
+                                "code", String.valueOf(HttpStatus.NOT_FOUND.value()));
+                ErrorResponse errorResponse = new ErrorResponse(errors, request.getRequestURI());
+                return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
+        }
 
-    @ExceptionHandler(EntityNotFoundException.class)
-    public ResponseEntity<ErrorResponse> handleEntityNotFoundException(EntityNotFoundException ex,
-            HttpServletRequest request) {
-        Map<String, Object> errors = Map.of(
-                "message", ex.getMessage(),
-                "code", String.valueOf(HttpStatus.NOT_FOUND.value()));
-        ErrorResponse errorResponse = new ErrorResponse(errors, request.getRequestURI());
-        return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
-    }
+        @ExceptionHandler(DataIntegrityViolationException.class)
+        public ResponseEntity<ErrorResponse> handleDataIntegrityViolationException(DataIntegrityViolationException ex,
+                        HttpServletRequest request) {
+                Map<String, Object> errors = Map.of(
+                                "message", ex.getMostSpecificCause().getMessage(),
+                                "code", String.valueOf(HttpStatus.CONFLICT.value()));
+                ErrorResponse errorResponse = new ErrorResponse(errors, request.getRequestURI());
+                return new ResponseEntity<>(errorResponse, HttpStatus.CONFLICT);
+        }
 
-    @ExceptionHandler(NoResourceFoundException.class)
-    public ResponseEntity<ErrorResponse> handleNoResourceFoundException(NoResourceFoundException ex,
-            HttpServletRequest request) {
-        Map<String, Object> errors = Map.of(
-                "message", ex.getMessage(),
-                "code", String.valueOf(HttpStatus.NOT_FOUND.value()));
-        ErrorResponse errorResponse = new ErrorResponse(errors, request.getRequestURI());
-        return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
-    }
+        @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
+        public ResponseEntity<ErrorResponse> handleMethodNotSupportedException(
+                        HttpRequestMethodNotSupportedException ex,
+                        HttpServletRequest request) {
+                Map<String, Object> errors = Map.of(
+                                "message", ex.getMessage(),
+                                "code", String.valueOf(HttpStatus.METHOD_NOT_ALLOWED.value()));
+                ErrorResponse errorResponse = new ErrorResponse(errors, request.getRequestURI());
+                return new ResponseEntity<>(errorResponse, HttpStatus.METHOD_NOT_ALLOWED);
+        }
 
-    @ExceptionHandler(DataIntegrityViolationException.class)
-    public ResponseEntity<ErrorResponse> handleDataIntegrityViolationException(DataIntegrityViolationException ex,
-            HttpServletRequest request) {
-        Map<String, Object> errors = Map.of(
-                "message", ex.getMostSpecificCause().getMessage(),
-                "code", String.valueOf(HttpStatus.CONFLICT.value()));
-        ErrorResponse errorResponse = new ErrorResponse(errors, request.getRequestURI());
-        return new ResponseEntity<>(errorResponse, HttpStatus.CONFLICT);
-    }
+        @ExceptionHandler(HttpMediaTypeNotSupportedException.class)
+        public ResponseEntity<ErrorResponse> handleMediaTypeNotSupportedException(HttpMediaTypeNotSupportedException ex,
+                        HttpServletRequest request) {
+                Map<String, Object> errors = Map.of(
+                                "message", ex.getMessage(),
+                                "code", String.valueOf(HttpStatus.UNSUPPORTED_MEDIA_TYPE.value()));
+                ErrorResponse errorResponse = new ErrorResponse(errors, request.getRequestURI());
+                return new ResponseEntity<>(errorResponse, HttpStatus.UNSUPPORTED_MEDIA_TYPE);
+        }
 
-    @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
-    public ResponseEntity<ErrorResponse> handleMethodNotSupportedException(HttpRequestMethodNotSupportedException ex,
-            HttpServletRequest request) {
-        Map<String, Object> errors = Map.of(
-                "message", ex.getMessage(),
-                "code", String.valueOf(HttpStatus.METHOD_NOT_ALLOWED.value()));
-        ErrorResponse errorResponse = new ErrorResponse(errors, request.getRequestURI());
-        return new ResponseEntity<>(errorResponse, HttpStatus.METHOD_NOT_ALLOWED);
-    }
+        @ExceptionHandler(AuthenticationException.class)
+        public ResponseEntity<ErrorResponse> handleAuthenticationException(AuthenticationException ex,
+                        HttpServletRequest request) {
+                Map<String, Object> errors = Map.of(
+                                "message", ex.getMessage(),
+                                "code", String.valueOf(HttpStatus.UNAUTHORIZED.value()));
+                ErrorResponse errorResponse = new ErrorResponse(errors, request.getRequestURI());
+                return new ResponseEntity<>(errorResponse, HttpStatus.UNAUTHORIZED);
+        }
 
-    @ExceptionHandler(HttpMediaTypeNotSupportedException.class)
-    public ResponseEntity<ErrorResponse> handleMediaTypeNotSupportedException(HttpMediaTypeNotSupportedException ex,
-            HttpServletRequest request) {
-        Map<String, Object> errors = Map.of(
-                "message", ex.getMessage(),
-                "code", String.valueOf(HttpStatus.UNSUPPORTED_MEDIA_TYPE.value()));
-        ErrorResponse errorResponse = new ErrorResponse(errors, request.getRequestURI());
-        return new ResponseEntity<>(errorResponse, HttpStatus.UNSUPPORTED_MEDIA_TYPE);
-    }
-
-    @ExceptionHandler(AuthenticationException.class)
-    public ResponseEntity<ErrorResponse> handleAuthenticationException(AuthenticationException ex,
-            HttpServletRequest request) {
-        Map<String, Object> errors = Map.of(
-                "message", ex.getMessage(),
-                "code", String.valueOf(HttpStatus.UNAUTHORIZED.value()));
-        ErrorResponse errorResponse = new ErrorResponse(errors, request.getRequestURI());
-        return new ResponseEntity<>(errorResponse, HttpStatus.UNAUTHORIZED);
-    }
-
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<ErrorResponse> handleGeneralException(Exception ex, HttpServletRequest request) {
-        Map<String, Object> errors = Map.of(
-                "message", ex.getMessage() != null ? ex.getMessage() : "An unexpected error occurred",
-                "code", String.valueOf(HttpStatus.INTERNAL_SERVER_ERROR.value()),
-                "exception", ex.getClass().getName());
-        ErrorResponse errorResponse = new ErrorResponse(errors, request.getRequestURI());
-        return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
-    }
+        @ExceptionHandler(Exception.class)
+        public ResponseEntity<ErrorResponse> handleGeneralException(Exception ex, HttpServletRequest request) {
+                Map<String, Object> errors = Map.of(
+                                "message", ex.getMessage() != null ? ex.getMessage() : "An unexpected error occurred",
+                                "code", String.valueOf(HttpStatus.INTERNAL_SERVER_ERROR.value()),
+                                "exception", ex.getClass().getName());
+                ErrorResponse errorResponse = new ErrorResponse(errors, request.getRequestURI());
+                return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
 }

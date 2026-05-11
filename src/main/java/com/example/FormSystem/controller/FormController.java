@@ -1,18 +1,17 @@
 package com.example.FormSystem.controller;
 
 import com.example.FormSystem.constant.MessageConstant;
+import com.example.FormSystem.dto.request.CreateFormRequest;
 import com.example.FormSystem.dto.response.PageResponse;
 import com.example.FormSystem.dto.response.ResponseData;
 import com.example.FormSystem.entity.Form;
 import com.example.FormSystem.service.FormService;
 
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/forms")
@@ -44,5 +43,18 @@ public class FormController {
                 true);
 
         return new ResponseEntity<>(res, HttpStatus.OK);
+    }
+
+    @PostMapping
+    public ResponseEntity<ResponseData<Form>> createForm(@Valid @RequestBody CreateFormRequest request) {
+        Form form = formService.createForm(request);
+
+        ResponseData<Form> res = new ResponseData<>(
+                MessageConstant.CREATE_SUCCESS,
+                form,
+                HttpStatus.CREATED.value(),
+                true);
+
+        return new ResponseEntity<>(res, HttpStatus.CREATED);
     }
 }
