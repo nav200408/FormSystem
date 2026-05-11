@@ -22,5 +22,7 @@ public class MessageConstant {
     public static final String FIELD_ORDER_MIN = "Field order must be at least 1";
     public static final String FIELD_IS_REQUIRED_REQUIRED = "Is required field is required";
     public static final String FIELD_OPTIONS_NOT_ALLOWED = "Options are only allowed for SELECT field type";
+    public static final String FIELD_OPTIONS_REQUIRED = "Options are required for SELECT field type";
     public static final String FIELD_ORDER_DUPLICATED = "Field order is already taken in this form";
+    public static final String FIELD_NOT_FOUND = "Field not found with id: ";
 }

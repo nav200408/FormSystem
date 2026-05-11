@@ -2,14 +2,14 @@ package com.example.FormSystem.dto.request;
 
 import com.example.FormSystem.constant.MessageConstant;
 import com.example.FormSystem.enums.FieldType;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.validation.constraints.AssertTrue;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import java.util.List;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import jakarta.validation.constraints.AssertTrue;
 
-public class CreateFieldRequest {
+public class UpdateFieldRequest {
 
     @NotBlank(message = MessageConstant.FIELD_LABEL_REQUIRED)
     private String fieldLabel;
@@ -44,7 +44,7 @@ public class CreateFieldRequest {
         return true;
     }
 
-    public CreateFieldRequest() {
+    public UpdateFieldRequest() {
     }
 
     public String getFieldLabel() {

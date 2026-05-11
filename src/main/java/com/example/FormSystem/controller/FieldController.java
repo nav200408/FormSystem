@@ -35,4 +35,21 @@ public class FieldController {
 
         return new ResponseEntity<>(res, HttpStatus.CREATED);
     }
+
+    @PutMapping("/{id}/fields/{fid}")
+    public ResponseEntity<ResponseData<Field>> updateField(
+            @PathVariable Long id,
+            @PathVariable Long fid,
+            @jakarta.validation.Valid @RequestBody com.example.FormSystem.dto.request.UpdateFieldRequest request) {
+
+        Field field = fieldService.updateField(id, fid, request);
+
+        ResponseData<Field> res = new ResponseData<>(
+                MessageConstant.UPDATE_SUCCESS,
+                field,
+                HttpStatus.OK.value(),
+                true);
+
+        return new ResponseEntity<>(res, HttpStatus.OK);
+    }
 }
