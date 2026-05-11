@@ -66,5 +66,11 @@ public class FormServiceImpl implements FormService {
         Form savedForm = formRepository.save(form);
         return FormMapper.toResponse(savedForm);
     }
-}
 
+    @Override
+    @Transactional
+    public void deleteForm(Long id) {
+        Form form = getFormById(id);
+        formRepository.delete(form);
+    }
+}

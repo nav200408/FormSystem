@@ -6,6 +6,7 @@ public class MessageConstant {
     public static final String RETRIEVE_DATA_SUCCESS = "Data retrieved successfully";
     public static final String CREATE_SUCCESS = "Data created successfully";
     public static final String UPDATE_SUCCESS = "Data updated successfully";
+    public static final String DELETE_SUCCESS = "Data deleted successfully";
 
     // form validation messages
     public static final String FORM_NAME_REQUIRED = "Form name is required";

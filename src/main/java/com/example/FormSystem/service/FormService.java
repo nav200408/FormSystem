@@ -14,4 +14,6 @@ public interface FormService {
     Form getFormById(Long id);
 
     FormDtoResponse updateForm(Long id, UpdateFormRequest request);
+
+    void deleteForm(Long id);
 }

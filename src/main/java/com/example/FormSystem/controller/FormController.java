@@ -87,4 +87,17 @@ public class FormController {
 
         return new ResponseEntity<>(res, HttpStatus.OK);
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<ResponseData<Void>> deleteForm(@PathVariable Long id) {
+        formService.deleteForm(id);
+
+        ResponseData<Void> res = new ResponseData<>(
+                MessageConstant.DELETE_SUCCESS,
+                null,
+                HttpStatus.OK.value(),
+                true);
+
+        return new ResponseEntity<>(res, HttpStatus.OK);
+    }
 }
