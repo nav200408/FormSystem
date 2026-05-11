@@ -5,6 +5,7 @@ public class MessageConstant {
     public static final String VALIDATION_FAILED = "Your request is not validated";
     public static final String RETRIEVE_DATA_SUCCESS = "Data retrieved successfully";
     public static final String CREATE_SUCCESS = "Data created successfully";
+    public static final String UPDATE_SUCCESS = "Data updated successfully";
 
     // form validation messages
     public static final String FORM_NAME_REQUIRED = "Form name is required";

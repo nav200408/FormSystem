@@ -2,6 +2,7 @@ package com.example.FormSystem.controller;
 
 import com.example.FormSystem.constant.MessageConstant;
 import com.example.FormSystem.dto.request.CreateFormRequest;
+import com.example.FormSystem.dto.request.UpdateFormRequest;
 import com.example.FormSystem.dto.response.FormDtoResponse;
 import com.example.FormSystem.dto.response.PageResponse;
 import com.example.FormSystem.dto.response.ResponseData;
@@ -65,6 +66,21 @@ public class FormController {
 
         ResponseData<Form> res = new ResponseData<>(
                 MessageConstant.RETRIEVE_DATA_SUCCESS,
+                form,
+                HttpStatus.OK.value(),
+                true);
+
+        return new ResponseEntity<>(res, HttpStatus.OK);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<ResponseData<FormDtoResponse>> updateForm(
+            @PathVariable Long id,
+            @Valid @RequestBody UpdateFormRequest request) {
+        FormDtoResponse form = formService.updateForm(id, request);
+
+        ResponseData<FormDtoResponse> res = new ResponseData<>(
+                MessageConstant.UPDATE_SUCCESS,
                 form,
                 HttpStatus.OK.value(),
                 true);

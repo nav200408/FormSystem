@@ -2,6 +2,7 @@ package com.example.FormSystem.service.impl;
 
 import com.example.FormSystem.constant.MessageConstant;
 import com.example.FormSystem.dto.request.CreateFormRequest;
+import com.example.FormSystem.dto.request.UpdateFormRequest;
 import com.example.FormSystem.dto.response.FormDtoResponse;
 import com.example.FormSystem.dto.response.PageResponse;
 import com.example.FormSystem.entity.Form;
@@ -46,7 +47,7 @@ public class FormServiceImpl implements FormService {
     @Override
     @Transactional
     public FormDtoResponse createForm(CreateFormRequest request) {
-        Form form = FormMapper.toEntity(request);
+        Form form = FormMapper.toEntityFromCreateFormRequest(request);
         Form savedForm = formRepository.save(form);
         return FormMapper.toResponse(savedForm);
     }
@@ -55,6 +56,15 @@ public class FormServiceImpl implements FormService {
     public Form getFormById(Long id) {
         return formRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException(MessageConstant.FORM_NOT_FOUND + id));
+    }
+
+    @Override
+    @Transactional
+    public FormDtoResponse updateForm(Long id, UpdateFormRequest request) {
+        Form form = getFormById(id);
+        FormMapper.toEntityFromUpdateFormRequest(form, request);
+        Form savedForm = formRepository.save(form);
+        return FormMapper.toResponse(savedForm);
     }
 }
 
