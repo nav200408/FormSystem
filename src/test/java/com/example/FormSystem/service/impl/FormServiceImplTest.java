@@ -1,7 +1,9 @@
 package com.example.FormSystem.service.impl;
 
+import com.example.FormSystem.dto.response.FormDtoResponse;
 import com.example.FormSystem.dto.response.PageResponse;
 import com.example.FormSystem.entity.Form;
+import com.example.FormSystem.enums.FormStatus;
 import com.example.FormSystem.repository.FormRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -34,6 +36,9 @@ public class FormServiceImplTest {
             Form form = new Form();
             form.setFormId((long) i);
             form.setFormName("Form " + i);
+            form.setFormDescription("Description " + i);
+            form.setStatus(FormStatus.DRAFT);
+            form.setOrder(i + 1);
             mockForms.add(form);
         }
     }
@@ -45,14 +50,13 @@ public class FormServiceImplTest {
         int size = 4;
         when(formRepository.findAllWithDeferredPagination(size + 1, 0)).thenReturn(mockForms);
 
-
-        PageResponse<Form> response = formService.getForms(page, size);
-
+        PageResponse<FormDtoResponse> response = formService.getForms(page, size);
 
         assertTrue(response.isHasNext());
         assertEquals(4, response.getContent().size());
         assertEquals(page, response.getPage());
         assertEquals(size, response.getSize());
+        assertEquals("Form 0", response.getContent().get(0).getFormName());
         verify(formRepository, times(1)).findAllWithDeferredPagination(size + 1, 0);
     }
 
@@ -63,12 +67,10 @@ public class FormServiceImplTest {
         int size = 5;
         when(formRepository.findAllWithDeferredPagination(size + 1, 0)).thenReturn(mockForms);
 
-
-        PageResponse<Form> response = formService.getForms(page, size);
-
+        PageResponse<FormDtoResponse> response = formService.getForms(page, size);
 
         assertFalse(response.isHasNext());
-        assertEquals(5, response.getContent().size()); // No items removed
+        assertEquals(5, response.getContent().size());
         assertEquals(page, response.getPage());
         assertEquals(size, response.getSize());
         verify(formRepository, times(1)).findAllWithDeferredPagination(size + 1, 0);
@@ -82,9 +84,7 @@ public class FormServiceImplTest {
         int offset = (page - 1) * size;
         when(formRepository.findAllWithDeferredPagination(size + 1, offset)).thenReturn(new ArrayList<>());
 
-
-        PageResponse<Form> response = formService.getForms(page, size);
-
+        PageResponse<FormDtoResponse> response = formService.getForms(page, size);
 
         assertFalse(response.isHasNext());
         assertTrue(response.getContent().isEmpty());
@@ -101,9 +101,7 @@ public class FormServiceImplTest {
         int expectedOffset = 20;
         when(formRepository.findAllWithDeferredPagination(size + 1, expectedOffset)).thenReturn(new ArrayList<>());
 
-
         formService.getForms(page, size);
-
 
         verify(formRepository, times(1)).findAllWithDeferredPagination(size + 1, expectedOffset);
     }

@@ -1,9 +1,10 @@
 package com.example.FormSystem.controller;
 
 import com.example.FormSystem.constant.MessageConstant;
+import com.example.FormSystem.dto.response.FormDtoResponse;
 import com.example.FormSystem.dto.response.PageResponse;
 import com.example.FormSystem.dto.response.ResponseData;
-import com.example.FormSystem.entity.Form;
+import com.example.FormSystem.enums.FormStatus;
 import com.example.FormSystem.service.FormService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -30,15 +31,17 @@ public class FormControllerTest {
     @InjectMocks
     private FormController formController;
 
-    private PageResponse<Form> mockPageResponse;
+    private PageResponse<FormDtoResponse> mockPageResponse;
 
     @BeforeEach
     void setUp() {
-        List<Form> forms = new ArrayList<>();
+        List<FormDtoResponse> forms = new ArrayList<>();
         for (int i = 0; i < 5; i++) {
-            Form form = new Form();
+            FormDtoResponse form = new FormDtoResponse();
             form.setFormId((long) i);
             form.setFormName("Form " + i);
+            form.setStatus(FormStatus.DRAFT);
+            form.setOrder(i + 1);
             forms.add(form);
         }
         mockPageResponse = new PageResponse<>(forms, 1, 5, true);
@@ -49,10 +52,10 @@ public class FormControllerTest {
 
         when(formService.getForms(2, 5)).thenReturn(mockPageResponse);
 
-        ResponseEntity<ResponseData<PageResponse<Form>>> responseEntity = formController.getAllForms(2, 5);
+        ResponseEntity<ResponseData<PageResponse<FormDtoResponse>>> responseEntity = formController.getAllForms(2, 5);
 
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
-        ResponseData<PageResponse<Form>> body = responseEntity.getBody();
+        ResponseData<PageResponse<FormDtoResponse>> body = responseEntity.getBody();
         assertTrue(body.isSuccess());
         assertEquals(200, body.getStatusCode());
         assertEquals(MessageConstant.RETRIEVE_DATA_SUCCESS, body.getMessage());
@@ -68,11 +71,10 @@ public class FormControllerTest {
 
         when(formService.getForms(1, 1)).thenReturn(mockPageResponse);
 
-        ResponseEntity<ResponseData<PageResponse<Form>>> responseEntity = formController.getAllForms(-5, 0);
-
+        ResponseEntity<ResponseData<PageResponse<FormDtoResponse>>> responseEntity = formController.getAllForms(-5, 0);
 
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
-        ResponseData<PageResponse<Form>> body = responseEntity.getBody();
+        ResponseData<PageResponse<FormDtoResponse>> body = responseEntity.getBody();
         assertTrue(body.isSuccess());
 
         verify(formService, times(1)).getForms(1, 1);

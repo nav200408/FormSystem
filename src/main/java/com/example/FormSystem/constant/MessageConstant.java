@@ -11,4 +11,5 @@ public class MessageConstant {
     public static final String FORM_DESCRIPTION_REQUIRED = "Form description is required";
     public static final String FORM_ORDER_REQUIRED = "Form order is required";
     public static final String FORM_ORDER_MIN = "Form order must be at least 1";
+    public static final String FORM_NOT_FOUND = "Form not found with id: ";
 }
