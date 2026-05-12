@@ -52,7 +52,7 @@ public class SubmissionServiceImpl implements SubmissionService {
 
         for (Field field : formFields) {
             String value = requestValues.get(field.getFieldId());
-            
+
             if (value != null && !value.trim().isEmpty()) {
                 SubmissionValue subValue = new SubmissionValue();
                 subValue.setField(field);

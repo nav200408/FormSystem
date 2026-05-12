@@ -40,4 +40,9 @@ public class MessageConstant {
     public static final String SUBMISSION_USER_ID_REQUIRED = "User ID is required";
     public static final String SUBMISSION_FIELD_ID_REQUIRED = "Field ID is required";
     public static final String SUBMISSION_VALUES_EMPTY = "Submission must contain at least one value";
+
+    // auth messages
+    public static final String REGISTER_SUCCESS = "User registered successfully";
+    public static final String LOGIN_SUCCESS = "Login successful";
+    public static final String USERNAME_ALREADY_TAKEN = "Username is already taken";
 }

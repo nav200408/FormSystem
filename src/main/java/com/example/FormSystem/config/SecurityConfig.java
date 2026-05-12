@@ -41,14 +41,20 @@ public class SecurityConfig {
         http.csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        .anyRequest().permitAll())
+                        .requestMatchers("/auth/**", "/swagger-ui/**", "/v3/api-docs/**", "/swagger-resources/**",
+                                "/webjars/**")
+                        .permitAll()
+                        .requestMatchers("/forms/active").hasAnyRole("USER", "ADMIN")
+                        .requestMatchers("/forms/*/submit").hasAnyRole("USER", "ADMIN")
+                        .requestMatchers("/submissions/**").hasAnyRole("USER", "ADMIN")
+                        .requestMatchers("/forms/**").hasRole("ADMIN")
+                        .anyRequest().authenticated())
 
                 .exceptionHandling(exception -> exception
                         .authenticationEntryPoint((request, response, authException) -> resolver
                                 .resolveException(request, response, null, authException))
                         .accessDeniedHandler((request, response, accessDeniedException) -> resolver
-                                .resolveException(request, response, null, accessDeniedException))
-                );
+                                .resolveException(request, response, null, accessDeniedException)));
         http.authenticationProvider(authenticationProvider());
         http.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
