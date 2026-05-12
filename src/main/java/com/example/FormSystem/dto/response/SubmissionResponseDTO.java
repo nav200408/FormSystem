@@ -2,7 +2,6 @@ package com.example.FormSystem.dto.response;
 
 import java.time.LocalDateTime;
 
-import com.example.FormSystem.entity.Form;
 
 public class SubmissionResponseDTO {
     private Long submissionId;

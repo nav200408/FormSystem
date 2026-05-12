@@ -104,4 +104,51 @@ public class SubmissionValidationTest {
         assertThrows(IllegalArgumentException.class,
                 () -> submissionValidation.validateFieldValue(field, "Option3"));
     }
+    @Test
+    void testValidateFieldValue_Text_Success() {
+        Field field = new Field();
+        field.setFieldType(FieldType.TEXT);
+        assertDoesNotThrow(() -> submissionValidation.validateFieldValue(field, "Valid text"));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = { "0", "50", "100" })
+    void testValidateFieldValue_Number_Success(String validValue) {
+        Field field = new Field();
+        field.setFieldType(FieldType.NUMBER);
+        assertDoesNotThrow(() -> submissionValidation.validateFieldValue(field, validValue));
+    }
+
+    @Test
+    void testValidateFieldValue_Date_Success() {
+        Field field = new Field();
+        field.setFieldType(FieldType.DATE);
+        String futureDate = java.time.LocalDate.now().plusDays(1).toString();
+        assertDoesNotThrow(() -> submissionValidation.validateFieldValue(field, futureDate));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = { "#FFF", "#FFFFFF", "#000000", "#abc" })
+    void testValidateFieldValue_Color_Success(String validColor) {
+        Field field = new Field();
+        field.setFieldType(FieldType.COLOR);
+        assertDoesNotThrow(() -> submissionValidation.validateFieldValue(field, validColor));
+    }
+
+    @Test
+    void testValidateFieldValue_Select_Success() {
+        Field field = new Field();
+        field.setFieldType(FieldType.SELECT);
+        field.setOptions(Arrays.asList("Option1", "Option2"));
+        assertDoesNotThrow(() -> submissionValidation.validateFieldValue(field, "Option1"));
+    }
+
+    @Test
+    void testValidateFieldValue_Optional_Success() {
+        Field field = new Field();
+        field.setFieldType(FieldType.NUMBER);
+        field.setIsRequired(false);
+        assertDoesNotThrow(() -> submissionValidation.validateFieldValue(field, null));
+        assertDoesNotThrow(() -> submissionValidation.validateFieldValue(field, ""));
+    }
 }
