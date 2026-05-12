@@ -2,6 +2,7 @@ package com.example.FormSystem.controller;
 
 import com.example.FormSystem.constant.MessageConstant;
 import com.example.FormSystem.dto.request.CreateFieldRequest;
+import com.example.FormSystem.dto.request.UpdateFieldRequest;
 import com.example.FormSystem.dto.response.ResponseData;
 import com.example.FormSystem.entity.Field;
 import com.example.FormSystem.service.FieldService;
@@ -40,13 +41,29 @@ public class FieldController {
     public ResponseEntity<ResponseData<Field>> updateField(
             @PathVariable Long id,
             @PathVariable Long fid,
-            @jakarta.validation.Valid @RequestBody com.example.FormSystem.dto.request.UpdateFieldRequest request) {
+            @Valid @RequestBody UpdateFieldRequest request) {
 
         Field field = fieldService.updateField(id, fid, request);
 
         ResponseData<Field> res = new ResponseData<>(
                 MessageConstant.UPDATE_SUCCESS,
                 field,
+                HttpStatus.OK.value(),
+                true);
+
+        return new ResponseEntity<>(res, HttpStatus.OK);
+    }
+
+    @DeleteMapping("/{id}/fields/{fid}")
+    public ResponseEntity<ResponseData<Void>> deleteField(
+            @PathVariable Long id,
+            @PathVariable Long fid) {
+
+        fieldService.deleteField(id, fid);
+
+        ResponseData<Void> res = new ResponseData<>(
+                MessageConstant.DELETE_SUCCESS,
+                null,
                 HttpStatus.OK.value(),
                 true);
 

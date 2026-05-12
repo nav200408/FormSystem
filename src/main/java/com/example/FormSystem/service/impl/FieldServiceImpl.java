@@ -5,6 +5,7 @@ import com.example.FormSystem.dto.request.CreateFieldRequest;
 import com.example.FormSystem.dto.request.UpdateFieldRequest;
 import com.example.FormSystem.entity.Field;
 import com.example.FormSystem.entity.Form;
+import com.example.FormSystem.mapper.FieldMapper;
 import com.example.FormSystem.repository.FieldRepository;
 import com.example.FormSystem.service.FieldService;
 import com.example.FormSystem.service.FormService;
@@ -25,30 +26,20 @@ public class FieldServiceImpl implements FieldService {
     @Override
     @Transactional
     public Field addFieldToForm(Long formId, CreateFieldRequest request) {
-
         Form form = formService.getFormById(formId);
 
         if (fieldRepository.existsByFormAndFieldOrder(form, request.getFieldOrder())) {
             throw new IllegalArgumentException(MessageConstant.FIELD_ORDER_DUPLICATED);
         }
 
-        Field field = new Field();
-        field.setFieldLabel(request.getFieldLabel());
-        field.setFieldType(request.getFieldType());
-        field.setFieldOrder(request.getFieldOrder());
-        field.setIsRequired(request.getIsRequired());
-        field.setOptions(request.getOptions());
-        field.setForm(form);
-
+        Field field = FieldMapper.toEntityFromCreateRequest(request, form);
         return fieldRepository.save(field);
     }
 
     @Override
     @Transactional
     public Field updateField(Long formId, Long fieldId, UpdateFieldRequest request) {
-
         Form form = formService.getFormById(formId);
-
         Field field = getFieldById(fieldId);
 
         if (!field.getForm().getFormId().equals(formId)) {
@@ -61,13 +52,21 @@ public class FieldServiceImpl implements FieldService {
             }
         }
 
-        field.setFieldLabel(request.getFieldLabel());
-        field.setFieldType(request.getFieldType());
-        field.setFieldOrder(request.getFieldOrder());
-        field.setIsRequired(request.getIsRequired());
-        field.setOptions(request.getOptions());
-
+        FieldMapper.toEntityFromUpdateRequest(field, request);
         return fieldRepository.save(field);
+    }
+
+    @Override
+    @Transactional
+    public void deleteField(Long formId, Long fieldId) {
+        formService.getFormById(formId);
+        Field field = getFieldById(fieldId);
+
+        if (!field.getForm().getFormId().equals(formId)) {
+            throw new IllegalArgumentException(MessageConstant.FORM_NOT_FOUND);
+        }
+
+        fieldRepository.delete(field);
     }
 
     private Field getFieldById(Long id) {
