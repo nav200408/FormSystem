@@ -27,6 +27,7 @@ public class Form {
     private Integer order;
 
     @OneToMany(mappedBy = "form", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OrderBy("fieldOrder ASC")
     private List<Field> fields;
 
     @OneToMany(mappedBy = "form", cascade = CascadeType.ALL, orphanRemoval = true)

@@ -2,6 +2,7 @@ package com.example.FormSystem.controller;
 
 import com.example.FormSystem.constant.MessageConstant;
 import com.example.FormSystem.dto.request.CreateFieldRequest;
+import com.example.FormSystem.dto.request.ReorderFieldRequest;
 import com.example.FormSystem.dto.request.UpdateFieldRequest;
 import com.example.FormSystem.dto.response.ResponseData;
 import com.example.FormSystem.entity.Field;
@@ -38,6 +39,22 @@ public class FieldController {
                 true);
 
         return new ResponseEntity<>(res, HttpStatus.CREATED);
+    }
+
+    @PutMapping("/forms/{id}/fields/reorder")
+    public ResponseEntity<ResponseData<Void>> reorderFields(
+            @PathVariable Long id,
+            @Valid @RequestBody ReorderFieldRequest request) {
+
+        fieldService.reorderFields(id, request);
+
+        ResponseData<Void> res = new ResponseData<>(
+                MessageConstant.UPDATE_SUCCESS,
+                null,
+                HttpStatus.OK.value(),
+                true);
+
+        return new ResponseEntity<>(res, HttpStatus.OK);
     }
 
     @PutMapping("/forms/{id}/fields/{fid}")
