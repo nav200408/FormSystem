@@ -68,6 +68,13 @@ public class FormServiceImpl implements FormService {
     }
 
     @Override
+    public List<FormDtoResponse> getActiveForms() {
+        return formRepository.findByStatus(com.example.FormSystem.enums.FormStatus.ACTIVE).stream()
+                .map(FormMapper::toResponse)
+                .toList();
+    }
+
+    @Override
     @Transactional
     public void deleteForm(Long id) {
         Form form = getFormById(id);

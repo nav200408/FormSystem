@@ -2,6 +2,8 @@ package com.example.FormSystem.entity;
 
 import jakarta.persistence.*;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 @Entity
 @Table(name = "submission_values")
@@ -13,11 +15,13 @@ public class SubmissionValue {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "submission_id", nullable = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     @JsonIgnore
     private Submission submission;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "field_id", nullable = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     @JsonIgnore
     private Field field;
 

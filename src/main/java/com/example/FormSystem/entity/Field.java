@@ -35,8 +35,13 @@ public class Field {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "form_id", nullable = false)
+    @org.hibernate.annotations.OnDelete(action = org.hibernate.annotations.OnDeleteAction.CASCADE)
     @JsonIgnore
     private Form form;
+
+    @OneToMany(mappedBy = "field", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
+    private List<SubmissionValue> submissionValues;
 
     public Field() {
     }
@@ -95,5 +100,13 @@ public class Field {
 
     public void setForm(Form form) {
         this.form = form;
+    }
+
+    public List<SubmissionValue> getSubmissionValues() {
+        return submissionValues;
+    }
+
+    public void setSubmissionValues(List<SubmissionValue> submissionValues) {
+        this.submissionValues = submissionValues;
     }
 }

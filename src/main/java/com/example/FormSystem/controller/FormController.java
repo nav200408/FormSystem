@@ -10,6 +10,9 @@ import com.example.FormSystem.entity.Form;
 import com.example.FormSystem.service.FormService;
 
 import jakarta.validation.Valid;
+
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -58,6 +61,19 @@ public class FormController {
                 true);
 
         return new ResponseEntity<>(res, HttpStatus.CREATED);
+    }
+
+    @GetMapping("/active")
+    public ResponseEntity<ResponseData<List<FormDtoResponse>>> getActiveForms() {
+        List<FormDtoResponse> forms = formService.getActiveForms();
+
+        ResponseData<List<FormDtoResponse>> res = new ResponseData<>(
+                MessageConstant.RETRIEVE_DATA_SUCCESS,
+                forms,
+                HttpStatus.OK.value(),
+                true);
+
+        return new ResponseEntity<>(res, HttpStatus.OK);
     }
 
     @GetMapping("/{id}")

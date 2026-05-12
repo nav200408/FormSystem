@@ -9,14 +9,16 @@ import com.example.FormSystem.mapper.FieldMapper;
 import com.example.FormSystem.repository.FieldRepository;
 import com.example.FormSystem.service.FieldService;
 import com.example.FormSystem.service.FormService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class FieldServiceImpl implements FieldService {
-
-    private final FieldRepository fieldRepository;
-    private final FormService formService;
+    @Autowired
+    private FieldRepository fieldRepository;
+    @Autowired
+    private FormService formService;
 
     public FieldServiceImpl(FieldRepository fieldRepository, FormService formService) {
         this.fieldRepository = fieldRepository;

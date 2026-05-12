@@ -6,6 +6,7 @@ import org.springframework.stereotype.Repository;
 
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import com.example.FormSystem.enums.FormStatus;
 
 import java.util.List;
 
@@ -19,4 +20,5 @@ public interface FormRepository extends JpaRepository<Form, Long> {
             "ORDER BY f.form_order ASC, f.form_id ASC", nativeQuery = true)
     List<Form> findAllWithDeferredPagination(@Param("limit") int limit, @Param("offset") int offset);
 
+    List<Form> findByStatus(FormStatus status);
 }

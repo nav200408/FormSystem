@@ -14,6 +14,8 @@ public interface FormService {
     Form getFormById(Long id);
 
     FormDtoResponse updateForm(Long id, UpdateFormRequest request);
+    
+    java.util.List<FormDtoResponse> getActiveForms();
 
     void deleteForm(Long id);
 }
