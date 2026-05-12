@@ -9,8 +9,8 @@ import com.example.FormSystem.repository.SubmissionRepository;
 import com.example.FormSystem.repository.UserRepository;
 import com.example.FormSystem.service.SubmissionService;
 import jakarta.persistence.EntityNotFoundException;
-
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,15 +25,11 @@ public class SubmissionServiceImpl implements SubmissionService {
     private SubmissionRepository submissionRepository;
     @Autowired
     private FormRepository formRepository;
-    @Autowired
-    private UserRepository userRepository;
 
     public SubmissionServiceImpl(SubmissionRepository submissionRepository,
-            FormRepository formRepository,
-            UserRepository userRepository) {
+            FormRepository formRepository) {
         this.submissionRepository = submissionRepository;
         this.formRepository = formRepository;
-        this.userRepository = userRepository;
     }
 
     @Override
@@ -42,8 +38,7 @@ public class SubmissionServiceImpl implements SubmissionService {
         Form form = formRepository.findById(formId)
                 .orElseThrow(() -> new EntityNotFoundException(MessageConstant.FORM_NOT_FOUND + formId));
 
-        User user = userRepository.findById(request.getUserId())
-                .orElseThrow(() -> new EntityNotFoundException(MessageConstant.USER_NOT_FOUND + request.getUserId()));
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         List<Field> formFields = form.getFields();
         List<SubmissionValue> submissionValues = new ArrayList<>();
@@ -71,5 +66,15 @@ public class SubmissionServiceImpl implements SubmissionService {
         }
 
         return submissionRepository.save(submission);
+    }
+
+    @Override
+    public List<Submission> getAllSubmissions() {
+        return submissionRepository.findAll();
+    }
+
+    @Override
+    public List<Submission> getSubmissionsByUserId(Long userId) {
+        return submissionRepository.findByUserId(userId);
     }
 }
