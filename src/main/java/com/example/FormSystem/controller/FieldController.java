@@ -7,21 +7,24 @@ import com.example.FormSystem.dto.response.ResponseData;
 import com.example.FormSystem.entity.Field;
 import com.example.FormSystem.service.FieldService;
 import jakarta.validation.Valid;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/forms")
+@RequestMapping
 public class FieldController {
 
-    private final FieldService fieldService;
+    @Autowired
+    private FieldService fieldService;
 
     public FieldController(FieldService fieldService) {
         this.fieldService = fieldService;
     }
 
-    @PostMapping("/{id}/fields")
+    @PostMapping("/forms/{id}/fields")
     public ResponseEntity<ResponseData<Field>> addFieldToForm(
             @PathVariable Long id,
             @Valid @RequestBody CreateFieldRequest request) {
@@ -37,7 +40,7 @@ public class FieldController {
         return new ResponseEntity<>(res, HttpStatus.CREATED);
     }
 
-    @PutMapping("/{id}/fields/{fid}")
+    @PutMapping("/forms/{id}/fields/{fid}")
     public ResponseEntity<ResponseData<Field>> updateField(
             @PathVariable Long id,
             @PathVariable Long fid,
@@ -54,7 +57,7 @@ public class FieldController {
         return new ResponseEntity<>(res, HttpStatus.OK);
     }
 
-    @DeleteMapping("/{id}/fields/{fid}")
+    @DeleteMapping("/forms/{id}/fields/{fid}")
     public ResponseEntity<ResponseData<Void>> deleteField(
             @PathVariable Long id,
             @PathVariable Long fid) {

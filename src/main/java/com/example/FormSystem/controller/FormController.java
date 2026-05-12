@@ -19,7 +19,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/forms")
+@RequestMapping
 public class FormController {
 
     @Autowired
@@ -29,7 +29,7 @@ public class FormController {
         this.formService = formService;
     }
 
-    @GetMapping
+    @GetMapping("/forms")
     public ResponseEntity<ResponseData<PageResponse<FormDtoResponse>>> getAllForms(
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "10") int size) {
@@ -50,7 +50,7 @@ public class FormController {
         return new ResponseEntity<>(res, HttpStatus.OK);
     }
 
-    @PostMapping
+    @PostMapping("/forms")
     public ResponseEntity<ResponseData<FormDtoResponse>> createForm(@Valid @RequestBody CreateFormRequest request) {
         FormDtoResponse form = formService.createForm(request);
 
@@ -63,7 +63,7 @@ public class FormController {
         return new ResponseEntity<>(res, HttpStatus.CREATED);
     }
 
-    @GetMapping("/active")
+    @GetMapping("/forms/active")
     public ResponseEntity<ResponseData<List<FormDtoResponse>>> getActiveForms() {
         List<FormDtoResponse> forms = formService.getActiveForms();
 
@@ -76,7 +76,7 @@ public class FormController {
         return new ResponseEntity<>(res, HttpStatus.OK);
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/forms/{id}")
     public ResponseEntity<ResponseData<Form>> getFormById(@PathVariable Long id) {
         Form form = formService.getFormById(id);
 
@@ -89,7 +89,7 @@ public class FormController {
         return new ResponseEntity<>(res, HttpStatus.OK);
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/forms/{id}")
     public ResponseEntity<ResponseData<FormDtoResponse>> updateForm(
             @PathVariable Long id,
             @Valid @RequestBody UpdateFormRequest request) {
@@ -104,7 +104,7 @@ public class FormController {
         return new ResponseEntity<>(res, HttpStatus.OK);
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/forms/{id}")
     public ResponseEntity<ResponseData<Void>> deleteForm(@PathVariable Long id) {
         formService.deleteForm(id);
 

@@ -6,21 +6,24 @@ import com.example.FormSystem.dto.response.ResponseData;
 import com.example.FormSystem.entity.Submission;
 import com.example.FormSystem.service.SubmissionService;
 import jakarta.validation.Valid;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/forms")
+@RequestMapping
 public class SubmissionController {
 
-    private final SubmissionService submissionService;
+    @Autowired
+    private SubmissionService submissionService;
 
     public SubmissionController(SubmissionService submissionService) {
         this.submissionService = submissionService;
     }
 
-    @PostMapping("/{id}/submit")
+    @PostMapping("/forms/{id}/submit")
     public ResponseEntity<ResponseData<Submission>> submitForm(
             @PathVariable Long id,
             @Valid @RequestBody SubmissionRequest request) {
