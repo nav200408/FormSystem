@@ -10,5 +10,4 @@ public interface SubmissionService {
 
     PageResponse<FormDtoResponse> getSubmissionsForCurrentUser(int page, int size);
 
-    PageResponse<FormDtoResponse> getAllSubmissions(int page, int size);
 }

@@ -6,11 +6,14 @@ import com.example.FormSystem.dto.request.UpdateFormRequest;
 import com.example.FormSystem.dto.response.FormDtoResponse;
 import com.example.FormSystem.dto.response.PageResponse;
 import com.example.FormSystem.entity.Form;
+import com.example.FormSystem.entity.User;
 import com.example.FormSystem.enums.FormStatus;
+import com.example.FormSystem.enums.Role;
 import com.example.FormSystem.exception.GlobalExceptionHandler;
 import com.example.FormSystem.service.FormService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.persistence.EntityNotFoundException;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -18,6 +21,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.MediaType;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
@@ -45,12 +50,11 @@ public class FormControllerTest {
     private ObjectMapper objectMapper = new ObjectMapper();
 
     @BeforeEach
-    void setUp() {
+    public void setup() {
         mockMvc = MockMvcBuilders.standaloneSetup(formController)
                 .setControllerAdvice(new GlobalExceptionHandler())
                 .build();
     }
-
 
     @Test
     void getAllForms_Success() throws Exception {
@@ -63,7 +67,7 @@ public class FormControllerTest {
 
         when(formService.getForms(1, 10)).thenReturn(pageResponse);
 
-        mockMvc.perform(get("/api/forms")
+        mockMvc.perform(get("/forms")
                 .param("page", "1")
                 .param("size", "10"))
                 .andExpect(status().isOk())
@@ -86,7 +90,7 @@ public class FormControllerTest {
 
         when(formService.createForm(any(CreateFormRequest.class))).thenReturn(response);
 
-        mockMvc.perform(post("/api/forms")
+        mockMvc.perform(post("/forms")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isCreated())
@@ -99,7 +103,7 @@ public class FormControllerTest {
         CreateFormRequest request = new CreateFormRequest();
         request.setFormName(""); // Invalid: NotBlank
 
-        mockMvc.perform(post("/api/forms")
+        mockMvc.perform(post("/forms")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isBadRequest())
@@ -116,7 +120,7 @@ public class FormControllerTest {
 
         when(formService.getFormById(1L)).thenReturn(form);
 
-        mockMvc.perform(get("/api/forms/1"))
+        mockMvc.perform(get("/forms/1"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data.formName", is("Detail Form")));
     }
@@ -125,7 +129,7 @@ public class FormControllerTest {
     void getFormById_NotFound() throws Exception {
         when(formService.getFormById(99L)).thenThrow(new EntityNotFoundException(MessageConstant.FORM_NOT_FOUND + 99));
 
-        mockMvc.perform(get("/api/forms/99"))
+        mockMvc.perform(get("/forms/99"))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.errors.message", containsString(MessageConstant.FORM_NOT_FOUND)));
     }
@@ -145,7 +149,7 @@ public class FormControllerTest {
 
         when(formService.updateForm(eq(1L), any(UpdateFormRequest.class))).thenReturn(response);
 
-        mockMvc.perform(put("/api/forms/1")
+        mockMvc.perform(put("/forms/1")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk())
@@ -162,7 +166,7 @@ public class FormControllerTest {
         when(formService.updateForm(eq(99L), any(UpdateFormRequest.class)))
                 .thenThrow(new EntityNotFoundException(MessageConstant.FORM_NOT_FOUND + 99));
 
-        mockMvc.perform(put("/api/forms/99")
+        mockMvc.perform(put("/forms/99")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isNotFound());
@@ -173,7 +177,7 @@ public class FormControllerTest {
     void deleteForm_Success() throws Exception {
         doNothing().when(formService).deleteForm(1L);
 
-        mockMvc.perform(delete("/api/forms/1"))
+        mockMvc.perform(delete("/forms/1"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.message", is(MessageConstant.DELETE_SUCCESS)));
     }
@@ -183,7 +187,7 @@ public class FormControllerTest {
         doThrow(new EntityNotFoundException(MessageConstant.FORM_NOT_FOUND + 99))
                 .when(formService).deleteForm(99L);
 
-        mockMvc.perform(delete("/api/forms/99"))
+        mockMvc.perform(delete("/forms/99"))
                 .andExpect(status().isNotFound());
     }
 }

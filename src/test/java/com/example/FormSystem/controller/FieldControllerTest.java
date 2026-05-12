@@ -60,7 +60,7 @@ public class FieldControllerTest {
 
         when(fieldService.addFieldToForm(eq(1L), any(CreateFieldRequest.class))).thenReturn(field);
 
-        mockMvc.perform(post("/api/forms/1/fields")
+        mockMvc.perform(post("/forms/1/fields")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isCreated())
@@ -80,7 +80,7 @@ public class FieldControllerTest {
         when(fieldService.addFieldToForm(eq(99L), any(CreateFieldRequest.class)))
                 .thenThrow(new EntityNotFoundException(MessageConstant.FORM_NOT_FOUND + 99));
 
-        mockMvc.perform(post("/api/forms/99/fields")
+        mockMvc.perform(post("/forms/99/fields")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isNotFound())
@@ -92,7 +92,7 @@ public class FieldControllerTest {
         CreateFieldRequest request = new CreateFieldRequest();
         request.setFieldLabel(""); // Invalid
 
-        mockMvc.perform(post("/api/forms/1/fields")
+        mockMvc.perform(post("/forms/1/fields")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isBadRequest())
@@ -111,7 +111,7 @@ public class FieldControllerTest {
         when(fieldService.addFieldToForm(eq(1L), any(CreateFieldRequest.class)))
                 .thenThrow(new IllegalArgumentException(MessageConstant.FIELD_ORDER_DUPLICATED));
 
-        mockMvc.perform(post("/api/forms/1/fields")
+        mockMvc.perform(post("/forms/1/fields")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isBadRequest())
@@ -132,7 +132,7 @@ public class FieldControllerTest {
 
         when(fieldService.updateField(eq(1L), eq(1L), any(UpdateFieldRequest.class))).thenReturn(field);
 
-        mockMvc.perform(put("/api/forms/1/fields/1")
+        mockMvc.perform(put("/forms/1/fields/1")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk())
@@ -151,7 +151,7 @@ public class FieldControllerTest {
         when(fieldService.updateField(eq(1L), eq(99L), any(UpdateFieldRequest.class)))
                 .thenThrow(new EntityNotFoundException(MessageConstant.FIELD_NOT_FOUND + 99));
 
-        mockMvc.perform(put("/api/forms/1/fields/99")
+        mockMvc.perform(put("/forms/1/fields/99")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isNotFound())
@@ -162,7 +162,7 @@ public class FieldControllerTest {
     void deleteField_Success() throws Exception {
         doNothing().when(fieldService).deleteField(1L, 1L);
 
-        mockMvc.perform(delete("/api/forms/1/fields/1"))
+        mockMvc.perform(delete("/forms/1/fields/1"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.message").value(MessageConstant.DELETE_SUCCESS));
         
@@ -174,7 +174,7 @@ public class FieldControllerTest {
         doThrow(new EntityNotFoundException(MessageConstant.FIELD_NOT_FOUND + 1))
                 .when(fieldService).deleteField(1L, 1L);
 
-        mockMvc.perform(delete("/api/forms/1/fields/1"))
+        mockMvc.perform(delete("/forms/1/fields/1"))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.errors.message").value(MessageConstant.FIELD_NOT_FOUND + 1));
     }

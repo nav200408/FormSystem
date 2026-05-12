@@ -89,19 +89,4 @@ public class SubmissionServiceImpl implements SubmissionService {
         return new PageResponse<>(content, formPage.getNumber() + 1, formPage.getSize(), formPage.hasNext());
     }
 
-    @Override
-    public PageResponse<FormDtoResponse> getAllSubmissions(int page, int size) {
-        int pageIndex = (page > 0) ? page - 1 : 0;
-        Pageable pageable = PageRequest.of(pageIndex, size);
-
-        Page<Submission> submissionPage = submissionRepository.findAll(pageable);
-
-        List<FormDtoResponse> content = submissionPage.getContent().stream()
-                .map(s -> FormMapper.toResponse(s.getForm()))
-                .distinct()
-                .collect(Collectors.toList());
-
-        return new PageResponse<>(content, submissionPage.getNumber() + 1, submissionPage.getSize(),
-                submissionPage.hasNext());
-    }
 }
