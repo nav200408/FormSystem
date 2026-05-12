@@ -27,7 +27,6 @@ public class MessageConstant {
     public static final String FIELD_NOT_FOUND = "Field not found with id: ";
 
     // submission validation messages
-    public static final String USER_NOT_FOUND = "User not found with id: ";
     public static final String SUBMISSION_FIELD_REQUIRED = "Field is required: ";
     public static final String SUBMISSION_TEXT_TOO_LONG = "Text value exceeds 200 characters for field: ";
     public static final String SUBMISSION_NUMBER_INVALID_RANGE = "Number must be between 0 and 100 for field: ";
@@ -37,7 +36,6 @@ public class MessageConstant {
     public static final String SUBMISSION_COLOR_FORMAT = "Invalid color HEX code for field: ";
     public static final String SUBMISSION_SELECT_INVALID = "Invalid option selected for field: ";
 
-    public static final String SUBMISSION_USER_ID_REQUIRED = "User ID is required";
     public static final String SUBMISSION_FIELD_ID_REQUIRED = "Field ID is required";
     public static final String SUBMISSION_VALUES_EMPTY = "Submission must contain at least one value";
 

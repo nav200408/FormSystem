@@ -21,4 +21,7 @@ public interface FormRepository extends JpaRepository<Form, Long> {
     List<Form> findAllWithDeferredPagination(@Param("limit") int limit, @Param("offset") int offset);
 
     List<Form> findByStatus(FormStatus status);
+
+    @Query("SELECT DISTINCT s.form FROM Submission s WHERE s.user.id = :userId")
+    org.springframework.data.domain.Page<Form> findFormsSubmittedByUserId(@Param("userId") Long userId, org.springframework.data.domain.Pageable pageable);
 }

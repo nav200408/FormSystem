@@ -1,13 +1,14 @@
 package com.example.FormSystem.service;
 
 import com.example.FormSystem.dto.request.SubmissionRequest;
+import com.example.FormSystem.dto.response.FormDtoResponse;
+import com.example.FormSystem.dto.response.PageResponse;
 import com.example.FormSystem.entity.Submission;
-import java.util.List;
 
 public interface SubmissionService {
     Submission submitForm(Long formId, SubmissionRequest request);
 
-    List<Submission> getAllSubmissions();
+    PageResponse<FormDtoResponse> getSubmissionsForCurrentUser(int page, int size);
 
-    List<Submission> getSubmissionsByUserId(Long userId);
+    PageResponse<FormDtoResponse> getAllSubmissions(int page, int size);
 }
