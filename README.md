@@ -13,7 +13,7 @@
 ## Công Nghệ Sử Dụng
 
 - **Ngôn ngữ**: Java 17
-- **Framework**: Spring Boot 3.x (AOP, Data JPA, Security, Validation, Web)
+- **Framework**: Spring Boot 4.x (AOP, Data JPA, Security, Validation, Web)
 - **Cơ sở dữ liệu**: PostgreSQL
 - **Bảo mật**: Spring Security & JWT
 - **Container hóa**: Docker & Docker Compose
