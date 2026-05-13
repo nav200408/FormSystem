@@ -54,7 +54,7 @@ Hệ thống đã được cấu hình sẵn Docker Compose bao gồm cả ứng
 Dự án được chú trọng vào việc đảm bảo chất lượng thông qua các bộ test:
 
 - **Unit Tests**: Bao gồm logic xử lý tại lớp Controller và Service, dto, validation middleware cho form submission.
-  **em không tạo middleware cho phần validation của các api khác ngoài api submit form do các request đó được kiểm tra đơn giản hơn, và việc test vẫn dễ dàng vì các lớp dto không có dependency**
+  **em không tạo middleware cho phần validation của các api khác ngoài api submit form do các request đó được kiểm tra đơn giản hơn, và việc test và validate vẫn có thể thực hiện ngay tại lớp DTO**
 
 ## Các Phần Đã Thực Hiện
 
