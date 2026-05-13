@@ -1,0 +1,40 @@
+version: "3.8"
+
+services:
+  db:
+    image: postgres:15-alpine
+    container_name: form-system-db
+    environment:
+      POSTGRES_DB: form_database
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: secretpassword
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - form-network
+
+  app:
+    build: .
+    container_name: form-system-app
+    ports:
+      - "8080:8080"
+    environment:
+      - DB_URL=jdbc:postgresql://db:5432/form_database
+      - DB_USERNAME=admin
+      - DB_PASSWORD=secretpassword
+      - JWT_SECRET=404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970
+      - JWT_EXPIRATION=604800000
+      - SERVER_SERVLET_CONTEXT_PATH=/api
+    depends_on:
+      - db
+    networks:
+      - form-network
+
+networks:
+  form-network:
+    driver: bridge
+
+volumes:
+  postgres_data:
